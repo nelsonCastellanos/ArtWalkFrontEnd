@@ -1,40 +1,49 @@
-import {useState} from 'react';
-import reactLogo from './assets/react.svg';
-import './App.css';
+import React from 'react';
+import {Box, Container, createTheme, ThemeProvider} from '@mui/material';
+import {ColorModeContext} from './Context';
+import Header from './components/header/Header.jsx';
 
 /**
- *
+ * Export theme react
  * @return {JSX.Element}
  * @constructor
  */
-function App() {
-  const [count, setCount] = useState(0);
+export default function App() {
+  const [mode, setMode] = React.useState('light');
+  const colorMode = React.useMemo(
+      () => ({
+        toggleColorMode: () => {
+          setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+        },
+      }),
+      [],
+  );
+
+  const theme = React.useMemo(
+      () =>
+        createTheme({
+          palette: {
+            mode,
+          },
+        }),
+      [mode],
+  );
 
   return (
-    // eslint-disable-next-line react/react-in-jsx-scope
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src="/vite.svg" className="logo" alt="Vite logo"/>
-        </a>
-        <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo"/>
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <Box
+          sx={{
+            bgcolor: 'background.default',
+            color: 'text.primary',
+          }}
+        >
+          <Header/>
+          <Container fixed>
+            <h1> Hello world!</h1>
+          </Container>
+        </Box>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
   );
 }
-
-export default App;
